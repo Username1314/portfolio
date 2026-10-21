@@ -49,3 +49,37 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #38bdf8;
 }
+
+/* Infinite Marquee Animation for Languages & Tech Stack */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 28s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Blinking Cursor for Typewriter */
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.animate-cursor {
+  animation: blink 0.9s infinite;
+}

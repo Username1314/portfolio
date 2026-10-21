@@ -1,16 +1,54 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowRight, Download, Mail, MapPin, Sparkles, Terminal } from 'lucide-react';
 import { GithubIcon, LinkedinIcon } from './Icons';
 import { portfolioData } from '../data/portfolioData';
 
+const words = [
+  "React.js",
+  "Modern JavaScript (ES6+)",
+  "Tailwind CSS",
+  "C / C++ Programming",
+  "Data Structures & Algorithms",
+  "Responsive UI/UX"
+];
+
 export default function Hero() {
   const { personal } = portfolioData;
 
+  // Typewriter state
+  const [wordIndex, setWordIndex] = useState(0);
+  const [subIndex, setSubIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [speed, setSpeed] = useState(120);
+
+  useEffect(() => {
+    const currentWord = words[wordIndex];
+
+    if (!isDeleting && subIndex === currentWord.length) {
+      // Pause at end of word
+      const timeout = setTimeout(() => setIsDeleting(true), 1800);
+      return () => clearTimeout(timeout);
+    } else if (isDeleting && subIndex === 0) {
+      // Switch to next word
+      setIsDeleting(false);
+      setWordIndex((prev) => (prev + 1) % words.length);
+      setSpeed(120);
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      setSubIndex((prev) => prev + (isDeleting ? -1 : 1));
+      setSpeed(isDeleting ? 40 : 100);
+    }, speed);
+
+    return () => clearTimeout(timeout);
+  }, [subIndex, isDeleting, wordIndex, speed]);
+
   return (
-    <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
+    <section className="relative pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden">
       {/* Background ambient glow effect */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[350px] bg-cyan-500/15 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute top-1/3 left-1/4 w-[350px] h-[300px] bg-blue-600/10 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[380px] bg-cyan-500/15 blur-[130px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/3 left-1/4 w-[380px] h-[320px] bg-blue-600/10 blur-[110px] rounded-full pointer-events-none" />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -29,16 +67,20 @@ export default function Hero() {
               Hi, I'm <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-500">{personal.name}</span>
             </h1>
 
-            {/* Sub-headline */}
-            <p className="text-xl sm:text-2xl font-semibold text-slate-300">
-              {personal.role} <span className="text-cyan-400">|</span> <span className="text-slate-400 text-lg font-normal">{personal.subRole}</span>
-            </p>
+            {/* Animated Language & Role Typewriter */}
+            <div className="text-xl sm:text-2xl font-bold text-slate-200 flex flex-wrap items-center justify-center lg:justify-start gap-2 min-h-[2.5rem]">
+              <span className="text-slate-400 font-medium">I build with</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-sky-300 border-b-2 border-cyan-400/40 pb-0.5">
+                {words[wordIndex].substring(0, subIndex)}
+              </span>
+              <span className="inline-block w-0.5 h-6 bg-cyan-400 animate-cursor ml-0.5"></span>
+            </div>
 
-            {/* College & Bio */}
+            {/* Sub-headline & College badge */}
             <div className="space-y-3">
-              <div className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-slate-400 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10">
+              <div className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-slate-300 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10">
                 <MapPin className="w-4 h-4 text-cyan-400 shrink-0" />
-                <span>{personal.college} &bull; {personal.location}</span>
+                <span className="font-medium text-slate-200">{personal.college}</span> &bull; <span>2nd Year (3rd Sem) CSE</span>
               </div>
               <p className="text-slate-400 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0">
                 {personal.bio}
@@ -97,7 +139,7 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Right Column: Code Snippet / Recruiter Snapshot Card */}
+          {/* Right Column: Interactive Code Snapshot Card */}
           <div className="lg:col-span-5">
             <div className="relative mx-auto max-w-md lg:max-w-none">
               
