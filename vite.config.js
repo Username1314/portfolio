@@ -8,4 +8,8 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  server: {
+    host: true, // Isse laptop aur phone dono par chalega
+    port: 5173,
+  },
 })
