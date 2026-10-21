@@ -2,9 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, FileText, Code2 } from 'lucide-react';
 import { portfolioData } from '../data/portfolioData';
 
+const titles = ["developer", "software engineer"];
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  // Logo animation state
+  const [titleIndex, setTitleIndex] = useState(0);
+  const [subIndex, setSubIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -13,6 +20,28 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Permanent loop between "developer" and "software engineer"
+  useEffect(() => {
+    const currentWord = titles[titleIndex];
+
+    if (!isDeleting && subIndex === currentWord.length) {
+      // Pause at full word for 2.2 seconds
+      const timeout = setTimeout(() => setIsDeleting(true), 2200);
+      return () => clearTimeout(timeout);
+    } else if (isDeleting && subIndex === 0) {
+      // Move to next word
+      setIsDeleting(false);
+      setTitleIndex((prev) => (prev + 1) % titles.length);
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      setSubIndex((prev) => prev + (isDeleting ? -1 : 1));
+    }, isDeleting ? 40 : 80);
+
+    return () => clearTimeout(timeout);
+  }, [subIndex, isDeleting, titleIndex]);
 
   const navLinks = [
     { name: 'About', href: '#about' },
@@ -30,15 +59,22 @@ export default function Navbar() {
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
-          {/* Logo */}
-          <a href="#" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold shadow-md shadow-cyan-500/20 group-hover:scale-105 transition-transform">
+          
+          {/* Animated Logo */}
+          <a href="#" className="flex items-center gap-2.5 group">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold shadow-md shadow-cyan-500/20 group-hover:scale-105 transition-transform shrink-0">
               <Code2 className="w-5 h-5" />
             </div>
-            <span className="font-bold text-lg sm:text-xl tracking-tight text-white group-hover:text-cyan-400 transition-colors">
-              {portfolioData.personal.name}
-              <span className="text-cyan-400">.dev</span>
-            </span>
+
+            <div className="flex items-center font-bold text-base sm:text-lg tracking-tight">
+              <span className="text-white">
+                {portfolioData.personal.name}.
+              </span>
+              <span className="inline-flex items-center text-cyan-400 font-semibold ml-0.5 min-w-[130px] sm:min-w-[160px]">
+                {titles[titleIndex].substring(0, subIndex)}
+                <span className="inline-block w-0.5 h-4 sm:h-5 bg-cyan-400 animate-cursor ml-0.5"></span>
+              </span>
+            </div>
           </a>
 
           {/* Desktop Nav Links */}
@@ -104,4 +140,3 @@ export default function Navbar() {
     </nav>
   );
 }
-
