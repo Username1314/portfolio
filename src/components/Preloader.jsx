@@ -8,18 +8,17 @@ export default function Preloader({ onComplete }) {
   const [statusText, setStatusText] = useState("Initializing Developer Modules...");
 
   useEffect(() => {
-    // Smoother, longer progress counter (~3.2 seconds total duration)
+    // Tuned for ~2.0s progress count + 0.5s pause/fade = exactly 2.5 seconds total
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
           return 100;
         }
-        // Steady increments for a premium, deliberate loading experience
-        const increment = Math.floor(Math.random() * 4) + 2; // 2 to 5% per step
+        // Increment between 2% and 4% every 50ms (~2 seconds to reach 100%)
+        const increment = Math.floor(Math.random() * 3) + 2; 
         const nextVal = Math.min(prev + increment, 100);
 
-        // Update status text based on progress
         if (nextVal < 30) {
           setStatusText("Initializing Developer Modules...");
         } else if (nextVal < 65) {
@@ -32,20 +31,20 @@ export default function Preloader({ onComplete }) {
 
         return nextVal;
       });
-    }, 95); // ~95ms * ~30 steps = ~3.0 - 3.2 seconds
+    }, 50);
 
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
     if (progress === 100) {
-      // Pause slightly at 100% so user sees completion before fading out
+      // Short pause at 100% then smooth fade-out (total duration ~2.5s)
       const timer = setTimeout(() => {
         setIsFadingOut(true);
         setTimeout(() => {
           if (onComplete) onComplete();
-        }, 600); // 600ms fade transition
-      }, 700);
+        }, 400); // 400ms fade transition
+      }, 300);
 
       return () => clearTimeout(timer);
     }
@@ -53,7 +52,7 @@ export default function Preloader({ onComplete }) {
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#070b13] transition-opacity duration-700 ${
+      className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#070b13] transition-opacity duration-500 ${
         isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
     >
@@ -69,7 +68,7 @@ export default function Preloader({ onComplete }) {
         {/* Middle pulsing ring (spins counter-clockwise) */}
         <div 
           className="absolute w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-transparent border-b-blue-500 border-l-cyan-300 animate-spin"
-          style={{ animationDirection: 'reverse', animationDuration: '1.6s' }}
+          style={{ animationDirection: 'reverse', animationDuration: '1.4s' }}
         />
 
         {/* Inner pulsing ring with glow */}
@@ -89,7 +88,7 @@ export default function Preloader({ onComplete }) {
         <div className="w-56 sm:w-64 mx-auto space-y-2.5">
           <div className="h-1.5 w-full bg-slate-800/80 rounded-full overflow-hidden border border-white/5">
             <div
-              className="h-full bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500 rounded-full transition-all duration-200 ease-out"
+              className="h-full bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500 rounded-full transition-all duration-150 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
