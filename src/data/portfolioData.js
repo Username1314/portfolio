@@ -8,7 +8,7 @@ export const portfolioData = {
     duration: "2024 - 2028",
     location: "Bharatpur, Rajasthan, India",
     email: "Abhayjatt112007@gmail.com",
-    github: "https://github.com", // Apna GitHub username link
+    github: "https://github.com/Username1314",
     linkedin: "https://www.linkedin.com/in/abhay-singh-5565aa379",
     resumeUrl: "/resume.pdf", // public/resume.pdf me apna resume daalein
     status: "Open for Internships & Opportunities",
